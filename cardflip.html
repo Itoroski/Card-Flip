@@ -1,0 +1,1728 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CardFlip — Trade Gift Cards Instantly</title>
+<link href="https://fonts.googleapis.com/css2?family=Clash+Display:wght@400;500;600;700&family=Sora:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#08090F;
+  --bg2:#0E1018;
+  --surface:#131621;
+  --surface2:#1A1E2E;
+  --surface3:#1F2435;
+  --border:rgba(255,255,255,0.07);
+  --border2:rgba(255,255,255,0.13);
+  --border3:rgba(255,255,255,0.2);
+  --text:#F2F4FF;
+  --text2:#9AA3C2;
+  --text3:#5C6480;
+  --accent:#4F8EF7;
+  --accent2:#7C5CFC;
+  --green:#1ED9A4;
+  --green2:rgba(30,217,164,0.12);
+  --amber:#F5A623;
+  --amber2:rgba(245,166,35,0.12);
+  --red:#F56565;
+  --red2:rgba(245,101,101,0.12);
+  --blue2:rgba(79,142,247,0.12);
+  --grad:linear-gradient(135deg,#4F8EF7,#7C5CFC);
+  --r:14px;--r2:10px;--r3:8px;
+  --font:'Sora',sans-serif;
+  --display:'Clash Display',sans-serif;
+  --mono:'JetBrains Mono',monospace;
+  --shadow:0 4px 24px rgba(0,0,0,0.4);
+  --trans:all 0.2s ease;
+}
+[data-theme="light"]{
+  --bg:#F0F2FA;--bg2:#E8EBF5;--surface:#FFFFFF;--surface2:#F5F7FF;--surface3:#EEF1FF;
+  --border:rgba(0,0,0,0.07);--border2:rgba(0,0,0,0.12);--border3:rgba(0,0,0,0.2);
+  --text:#0D0F1A;--text2:#4A5280;--text3:#8A93B5;
+  --green2:rgba(30,217,164,0.1);--amber2:rgba(245,166,35,0.1);
+  --red2:rgba(245,101,101,0.1);--blue2:rgba(79,142,247,0.1);
+  --shadow:0 4px 24px rgba(0,0,0,0.1);
+}
+
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:var(--font);font-size:14px;line-height:1.6;min-height:100vh;overflow-x:hidden}
+
+/* SCROLLBAR */
+::-webkit-scrollbar{width:5px}
+::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:var(--surface3);border-radius:3px}
+
+/* NAV */
+nav{position:fixed;top:0;left:0;right:0;z-index:1000;background:rgba(8,9,15,0.85);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);padding:0 24px;height:64px;display:flex;align-items:center;justify-content:space-between;transition:var(--trans)}
+[data-theme="light"] nav{background:rgba(240,242,250,0.85)}
+.nav-logo{font-family:var(--display);font-size:22px;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:8px}
+.nav-logo .dot{width:8px;height:8px;background:var(--grad);border-radius:50%;display:inline-block}
+.nav-logo span{background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.nav-links{display:flex;align-items:center;gap:4px}
+.nav-link{padding:7px 14px;border-radius:var(--r3);color:var(--text2);font-size:13px;cursor:pointer;transition:var(--trans);border:none;background:none;font-family:var(--font)}
+.nav-link:hover,.nav-link.active{color:var(--text);background:var(--surface2)}
+.nav-right{display:flex;align-items:center;gap:10px}
+.btn-nav{padding:8px 18px;border-radius:var(--r3);font-size:13px;font-weight:500;cursor:pointer;font-family:var(--font);transition:var(--trans);border:1px solid var(--border2);background:var(--surface);color:var(--text)}
+.btn-nav:hover{border-color:var(--border3)}
+.btn-nav.primary{background:var(--grad);border-color:transparent;color:#fff}
+.btn-nav.primary:hover{opacity:0.88;transform:translateY(-1px)}
+.theme-toggle{width:34px;height:34px;border-radius:var(--r3);background:var(--surface);border:1px solid var(--border2);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:16px;transition:var(--trans)}
+.theme-toggle:hover{border-color:var(--border3)}
+.avatar-nav{width:34px;height:34px;border-radius:50%;background:var(--grad);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;color:#fff;cursor:pointer;flex-shrink:0}
+
+/* PAGES */
+.page{display:none;min-height:100vh;padding-top:64px;animation:fadeUp 0.3s ease}
+.page.active{display:block}
+@keyframes fadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+
+/* HERO */
+.hero{padding:80px 24px 60px;max-width:1100px;margin:0 auto;text-align:center}
+.hero-badge{display:inline-flex;align-items:center;gap:8px;background:var(--blue2);border:1px solid rgba(79,142,247,0.25);border-radius:30px;padding:6px 14px;font-size:12px;color:var(--accent);margin-bottom:28px;font-weight:500}
+.hero-badge .pulse{width:7px;height:7px;background:var(--green);border-radius:50%;animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:0.5;transform:scale(1.3)}}
+.hero h1{font-family:var(--display);font-size:clamp(42px,7vw,80px);font-weight:700;line-height:1.05;letter-spacing:-2px;margin-bottom:20px}
+.hero h1 .grad{background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.hero-sub{font-size:17px;color:var(--text2);max-width:520px;margin:0 auto 36px;line-height:1.7}
+.hero-actions{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+.btn-hero{padding:14px 28px;border-radius:var(--r2);font-size:15px;font-weight:500;cursor:pointer;font-family:var(--font);transition:var(--trans);border:1px solid var(--border2)}
+.btn-hero.primary{background:var(--grad);border-color:transparent;color:#fff;box-shadow:0 8px 32px rgba(79,142,247,0.3)}
+.btn-hero.primary:hover{transform:translateY(-2px);box-shadow:0 12px 40px rgba(79,142,247,0.4)}
+.btn-hero.ghost{background:var(--surface);color:var(--text)}
+.btn-hero.ghost:hover{border-color:var(--border3)}
+
+.hero-stats{display:flex;gap:40px;justify-content:center;margin-top:60px;padding-top:40px;border-top:1px solid var(--border)}
+.hero-stat{}
+.hero-stat-val{font-family:var(--display);font-size:32px;font-weight:700;background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.hero-stat-label{font-size:12px;color:var(--text3);margin-top:2px}
+
+/* TICKER */
+.ticker-wrap{background:var(--surface);border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:12px 0;overflow:hidden;position:relative}
+.ticker{display:flex;gap:0;animation:ticker 28s linear infinite;white-space:nowrap}
+.ticker:hover{animation-play-state:paused}
+.ticker-item{display:flex;align-items:center;gap:10px;padding:0 28px;border-right:1px solid var(--border);flex-shrink:0}
+.ticker-item:last-child{border-right:none}
+.ticker-icon{font-size:16px}
+.ticker-name{font-size:12px;font-weight:500}
+.ticker-rate{font-size:12px;color:var(--green);font-family:var(--mono);font-weight:500}
+@keyframes ticker{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+
+/* SECTIONS */
+.section{padding:60px 24px;max-width:1100px;margin:0 auto}
+.section-label{font-size:11px;text-transform:uppercase;letter-spacing:2px;color:var(--accent);font-weight:600;margin-bottom:12px}
+.section-title{font-family:var(--display);font-size:clamp(28px,4vw,44px);font-weight:700;letter-spacing:-1px;margin-bottom:16px}
+.section-sub{font-size:15px;color:var(--text2);max-width:480px;line-height:1.7}
+
+/* FEATURES GRID */
+.features-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px;margin-top:40px}
+.feature-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:24px;transition:var(--trans)}
+.feature-card:hover{border-color:var(--border2);transform:translateY(-3px);box-shadow:var(--shadow)}
+.feature-icon{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px;margin-bottom:16px}
+.feature-icon.blue{background:var(--blue2)}
+.feature-icon.green{background:var(--green2)}
+.feature-icon.amber{background:var(--amber2)}
+.feature-icon.red{background:var(--red2)}
+.feature-title{font-size:15px;font-weight:600;margin-bottom:8px}
+.feature-desc{font-size:13px;color:var(--text2);line-height:1.6}
+
+/* CARDS GRID */
+.cards-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;margin-top:32px}
+.gc-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:16px;display:flex;align-items:center;gap:14px;cursor:pointer;transition:var(--trans)}
+.gc-card:hover{border-color:var(--accent);background:var(--surface2);transform:translateY(-2px)}
+.gc-icon{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.gc-name{font-size:13px;font-weight:500}
+.gc-rate{font-size:12px;font-family:var(--mono);color:var(--green);margin-top:2px}
+
+/* HOW IT WORKS */
+.steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:0;margin-top:40px;position:relative}
+.step{padding:32px 24px;position:relative;text-align:center}
+.step-num{width:48px;height:48px;border-radius:50%;background:var(--grad);display:flex;align-items:center;justify-content:center;font-family:var(--display);font-size:20px;font-weight:700;color:#fff;margin:0 auto 16px}
+.step-title{font-size:15px;font-weight:600;margin-bottom:8px}
+.step-desc{font-size:13px;color:var(--text2)}
+.step::after{content:'→';position:absolute;right:-14px;top:50%;transform:translateY(-50%);font-size:20px;color:var(--text3)}
+.step:last-child::after{display:none}
+
+/* DASHBOARD PAGE */
+.dash-layout{display:grid;grid-template-columns:260px 1fr;gap:0;min-height:calc(100vh - 64px)}
+.sidebar{background:var(--surface);border-right:1px solid var(--border);padding:24px 16px;position:sticky;top:64px;height:calc(100vh - 64px);overflow-y:auto}
+.sidebar-section{margin-bottom:28px}
+.sidebar-label{font-size:10px;text-transform:uppercase;letter-spacing:1.5px;color:var(--text3);margin-bottom:8px;padding:0 8px}
+.sidebar-item{display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:var(--r3);cursor:pointer;transition:var(--trans);color:var(--text2);font-size:13px;border:none;background:none;font-family:var(--font);width:100%;text-align:left}
+.sidebar-item:hover{background:var(--surface2);color:var(--text)}
+.sidebar-item.active{background:var(--blue2);color:var(--accent)}
+.sidebar-item .icon{width:20px;text-align:center;font-size:15px}
+.sidebar-item .badge-count{margin-left:auto;background:var(--amber2);color:var(--amber);font-size:10px;padding:2px 6px;border-radius:10px;font-family:var(--mono)}
+.sidebar-wallet{background:var(--surface2);border:1px solid var(--border);border-radius:var(--r2);padding:14px;margin-top:auto}
+.sidebar-wallet-label{font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:1px}
+.sidebar-wallet-amount{font-family:var(--mono);font-size:20px;font-weight:600;margin:4px 0}
+
+.dash-content{padding:28px;overflow-y:auto}
+.dash-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:24px}
+.dash-title{font-family:var(--display);font-size:24px;font-weight:700}
+.dash-greeting{font-size:13px;color:var(--text2);margin-top:2px}
+
+/* WALLET CARD */
+.wallet-hero{background:var(--surface2);border:1px solid var(--border);border-radius:var(--r);padding:28px;margin-bottom:20px;position:relative;overflow:hidden}
+.wallet-hero::before{content:'';position:absolute;top:-60px;right:-60px;width:200px;height:200px;background:var(--grad);border-radius:50%;opacity:0.06}
+.wallet-hero::after{content:'';position:absolute;bottom:-40px;left:40px;width:150px;height:150px;border:1px solid rgba(79,142,247,0.1);border-radius:50%}
+.wh-label{font-size:11px;text-transform:uppercase;letter-spacing:1.5px;color:var(--text3);margin-bottom:8px}
+.wh-amount{font-family:var(--mono);font-size:40px;font-weight:600;letter-spacing:-1px;line-height:1}
+.wh-amount .cur{font-size:20px;color:var(--text2);font-weight:400}
+.wh-change{font-size:13px;color:var(--green);margin-top:8px}
+.wh-actions{display:flex;gap:10px;margin-top:20px}
+.btn{padding:10px 20px;border-radius:var(--r3);font-size:13px;font-weight:500;cursor:pointer;font-family:var(--font);transition:var(--trans);border:1px solid var(--border2);background:var(--surface);color:var(--text);display:inline-flex;align-items:center;gap:6px}
+.btn:hover{border-color:var(--border3);background:var(--surface2)}
+.btn.primary{background:var(--grad);border-color:transparent;color:#fff}
+.btn.primary:hover{opacity:0.88;transform:translateY(-1px)}
+.btn.green{background:var(--green2);border-color:rgba(30,217,164,0.25);color:var(--green)}
+.btn.danger{background:var(--red2);border-color:rgba(245,101,101,0.25);color:var(--red)}
+
+/* STATS ROW */
+.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px}
+.stat-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r2);padding:16px}
+.stat-val{font-family:var(--mono);font-size:22px;font-weight:600}
+.stat-val.green{color:var(--green)}
+.stat-val.amber{color:var(--amber)}
+.stat-val.red{color:var(--red)}
+.stat-val.blue{color:var(--accent)}
+.stat-label{font-size:11px;color:var(--text3);margin-top:4px}
+.stat-change{font-size:11px;margin-top:6px}
+.stat-change.up{color:var(--green)}
+.stat-change.down{color:var(--red)}
+
+/* TWO COL */
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px}
+.three-col{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-bottom:20px}
+
+/* CARD */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:20px}
+.card-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}
+.card-title{font-size:14px;font-weight:600}
+.card-action{font-size:12px;color:var(--accent);cursor:pointer;transition:var(--trans)}
+.card-action:hover{opacity:0.7}
+
+/* TRANSACTIONS */
+.tx-list{}
+.tx-item{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--border)}
+.tx-item:last-child{border-bottom:none}
+.tx-icon{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0}
+.tx-icon.credit{background:var(--green2)}
+.tx-icon.debit{background:var(--red2)}
+.tx-icon.pending{background:var(--amber2)}
+.tx-info{flex:1}
+.tx-name{font-size:13px;font-weight:500}
+.tx-meta{font-size:11px;color:var(--text3);margin-top:2px}
+.tx-amount{font-family:var(--mono);font-size:13px;font-weight:600;text-align:right}
+.tx-amount.credit{color:var(--green)}
+.tx-amount.debit{color:var(--red)}
+.tx-amount.pending{color:var(--amber)}
+.tx-status{font-size:10px;margin-top:2px;text-align:right}
+
+/* BADGES */
+.badge{display:inline-flex;align-items:center;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:500}
+.badge.pending{background:var(--amber2);color:var(--amber)}
+.badge.approved,.badge.active{background:var(--green2);color:var(--green)}
+.badge.rejected,.badge.flagged{background:var(--red2);color:var(--red)}
+.badge.info{background:var(--blue2);color:var(--accent)}
+
+/* SELL FORM */
+.form-group{margin-bottom:16px}
+.form-label{font-size:12px;color:var(--text2);margin-bottom:6px;display:block;font-weight:500}
+.form-input,.form-select,.form-textarea{width:100%;padding:10px 14px;background:var(--bg);border:1px solid var(--border2);border-radius:var(--r3);color:var(--text);font-size:13px;font-family:var(--font);outline:none;transition:var(--trans)}
+.form-input:focus,.form-select:focus,.form-textarea:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(79,142,247,0.1)}
+.form-select{appearance:none;cursor:pointer}
+.form-textarea{resize:vertical;min-height:80px}
+.upload-zone{border:2px dashed var(--border2);border-radius:var(--r2);padding:28px;text-align:center;cursor:pointer;transition:var(--trans);color:var(--text3)}
+.upload-zone:hover{border-color:var(--accent);color:var(--accent);background:var(--blue2)}
+.upload-zone .upload-icon{font-size:32px;margin-bottom:10px}
+.upload-zone p{font-size:13px;margin-bottom:4px}
+.upload-zone small{font-size:11px}
+.payout-preview{background:var(--green2);border:1px solid rgba(30,217,164,0.2);border-radius:var(--r2);padding:16px;margin:16px 0}
+.payout-label{font-size:11px;color:var(--text2);margin-bottom:4px}
+.payout-amount{font-family:var(--mono);font-size:28px;font-weight:600;color:var(--green)}
+.payout-note{font-size:11px;color:var(--text3);margin-top:4px}
+
+/* RATES TABLE */
+.rates-table{width:100%;border-collapse:collapse;margin-top:16px}
+.rates-table th{font-size:11px;text-transform:uppercase;letter-spacing:1px;color:var(--text3);padding:10px 14px;text-align:left;border-bottom:1px solid var(--border)}
+.rates-table td{padding:12px 14px;border-bottom:1px solid var(--border);font-size:13px;vertical-align:middle}
+.rates-table tr:last-child td{border-bottom:none}
+.rates-table tr:hover td{background:var(--surface2)}
+.rate-change.up{color:var(--green);font-size:11px}
+.rate-change.down{color:var(--red);font-size:11px}
+
+/* ADMIN TABLE */
+.admin-table{width:100%;border-collapse:collapse}
+.admin-table th{font-size:11px;text-transform:uppercase;letter-spacing:1px;color:var(--text3);padding:10px 14px;text-align:left;border-bottom:1px solid var(--border)}
+.admin-table td{padding:12px 14px;border-bottom:1px solid var(--border);font-size:13px;vertical-align:middle}
+.admin-table tr:last-child td{border-bottom:none}
+.admin-table tr:hover td{background:var(--surface2)}
+.action-btns{display:flex;gap:6px}
+.btn-xs{padding:5px 11px;border-radius:6px;font-size:11px;font-weight:500;cursor:pointer;font-family:var(--font);transition:var(--trans);border:1px solid var(--border2);background:none;color:var(--text)}
+.btn-xs:hover{background:var(--surface2)}
+.btn-xs.approve{background:var(--green2);border-color:rgba(30,217,164,0.25);color:var(--green)}
+.btn-xs.reject{background:var(--red2);border-color:rgba(245,101,101,0.25);color:var(--red)}
+.btn-xs.view{background:var(--blue2);border-color:rgba(79,142,247,0.25);color:var(--accent)}
+
+/* RATE EDIT */
+.rate-edit-input{width:90px;padding:6px 10px;background:var(--bg);border:1px solid var(--border2);border-radius:6px;color:var(--text);font-family:var(--mono);font-size:13px;outline:none;text-align:right}
+.rate-edit-input:focus{border-color:var(--accent)}
+
+/* MODALS */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.7);backdrop-filter:blur(4px);z-index:2000;display:none;align-items:center;justify-content:center}
+.modal-overlay.open{display:flex}
+.modal{background:var(--surface);border:1px solid var(--border2);border-radius:var(--r);padding:28px;width:90%;max-width:440px;animation:fadeUp 0.25s ease;position:relative}
+.modal-title{font-family:var(--display);font-size:22px;font-weight:700;margin-bottom:6px}
+.modal-sub{font-size:13px;color:var(--text2);margin-bottom:24px}
+.modal-close{position:absolute;top:16px;right:16px;width:30px;height:30px;border-radius:50%;background:var(--surface2);border:1px solid var(--border);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:16px;transition:var(--trans);color:var(--text2)}
+.modal-close:hover{background:var(--surface3)}
+.modal-tabs{display:flex;gap:4px;background:var(--surface2);border-radius:var(--r3);padding:3px;margin-bottom:20px}
+.modal-tab{flex:1;text-align:center;padding:8px;border-radius:6px;cursor:pointer;font-size:13px;color:var(--text2);transition:var(--trans)}
+.modal-tab.active{background:var(--surface);color:var(--text);font-weight:500}
+.otp-inputs{display:flex;gap:10px;justify-content:center;margin:16px 0}
+.otp-input{width:46px;height:52px;background:var(--bg);border:1px solid var(--border2);border-radius:var(--r3);text-align:center;font-size:22px;font-family:var(--mono);font-weight:600;color:var(--text);outline:none}
+.otp-input:focus{border-color:var(--accent)}
+
+/* TOAST */
+.toast-container{position:fixed;bottom:24px;right:24px;z-index:3000;display:flex;flex-direction:column;gap:8px}
+.toast{background:var(--surface2);border:1px solid var(--border2);border-radius:var(--r2);padding:12px 18px;font-size:13px;display:flex;align-items:center;gap:10px;min-width:240px;box-shadow:var(--shadow);animation:slideIn 0.3s ease;transform-origin:bottom right}
+@keyframes slideIn{from{opacity:0;transform:translateX(20px) scale(0.95)}to{opacity:1;transform:translateX(0) scale(1)}}
+.toast.removing{animation:slideOut 0.2s ease forwards}
+@keyframes slideOut{to{opacity:0;transform:translateX(20px) scale(0.95)}}
+.toast.success .toast-icon{color:var(--green)}
+.toast.error .toast-icon{color:var(--red)}
+.toast.info .toast-icon{color:var(--accent)}
+.toast.warning .toast-icon{color:var(--amber)}
+.toast-icon{font-size:16px}
+.toast-msg{flex:1}
+
+/* CHART (simple bar) */
+.mini-chart{display:flex;align-items:flex-end;gap:4px;height:64px;margin-top:12px}
+.bar{flex:1;border-radius:3px 3px 0 0;background:var(--blue2);border-top:2px solid var(--accent);transition:all 0.4s ease;min-height:4px}
+.bar.today{background:rgba(79,142,247,0.25);border-top:2px solid var(--accent2)}
+
+/* NOTIFICATION BELL */
+.notif-dot{width:7px;height:7px;background:var(--red);border-radius:50%;position:absolute;top:5px;right:5px}
+.notif-btn{position:relative;width:34px;height:34px;border-radius:var(--r3);background:var(--surface);border:1px solid var(--border2);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:16px;transition:var(--trans)}
+.notif-btn:hover{border-color:var(--border3)}
+
+/* REFERRAL */
+.ref-code-box{background:var(--surface2);border:1px solid var(--border);border-radius:var(--r2);padding:16px;display:flex;align-items:center;justify-content:space-between;margin:16px 0}
+.ref-code{font-family:var(--mono);font-size:22px;font-weight:600;color:var(--accent);letter-spacing:2px}
+
+/* PROGRESS BAR */
+.progress-bar{height:6px;background:var(--surface2);border-radius:3px;overflow:hidden;margin-top:8px}
+.progress-fill{height:100%;background:var(--grad);border-radius:3px;transition:width 0.5s ease}
+
+/* SEARCH */
+.search-box{position:relative;margin-bottom:16px}
+.search-icon{position:absolute;left:12px;top:50%;transform:translateY(-50%);font-size:14px;color:var(--text3)}
+.search-input{width:100%;padding:9px 14px 9px 36px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--r3);color:var(--text);font-size:13px;font-family:var(--font);outline:none;transition:var(--trans)}
+.search-input:focus{border-color:var(--accent)}
+
+/* LANDING PRICING */
+.pricing-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px;margin-top:32px}
+.pricing-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:28px;position:relative;transition:var(--trans)}
+.pricing-card:hover{transform:translateY(-4px);box-shadow:var(--shadow)}
+.pricing-card.featured{border-color:var(--accent);background:linear-gradient(180deg,rgba(79,142,247,0.06),var(--surface))}
+.pricing-badge{position:absolute;top:-12px;left:50%;transform:translateX(-50%);background:var(--grad);color:#fff;font-size:11px;font-weight:600;padding:4px 14px;border-radius:20px;white-space:nowrap}
+.pricing-tier{font-size:13px;color:var(--text2);margin-bottom:8px}
+.pricing-price{font-family:var(--display);font-size:40px;font-weight:700;letter-spacing:-1px}
+.pricing-sub{font-size:13px;color:var(--text3);margin-bottom:20px}
+.pricing-features{list-style:none;margin-bottom:24px}
+.pricing-features li{font-size:13px;color:var(--text2);padding:7px 0;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px}
+.pricing-features li::before{content:'✓';color:var(--green);font-weight:600;flex-shrink:0}
+
+/* FOOTER */
+footer{background:var(--surface);border-top:1px solid var(--border);padding:48px 24px;margin-top:60px}
+.footer-inner{max-width:1100px;margin:0 auto;display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:40px}
+.footer-brand p{font-size:13px;color:var(--text2);margin-top:10px;line-height:1.7;max-width:240px}
+.footer-col-title{font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:1px;color:var(--text3);margin-bottom:14px}
+.footer-link{display:block;font-size:13px;color:var(--text2);margin-bottom:8px;cursor:pointer;transition:var(--trans)}
+.footer-link:hover{color:var(--accent)}
+.footer-bottom{max-width:1100px;margin:32px auto 0;padding-top:24px;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;font-size:12px;color:var(--text3)}
+
+/* DIVIDER */
+.divider{height:1px;background:var(--border);margin:20px 0}
+
+/* INFO BOX */
+.info-box{background:var(--blue2);border:1px solid rgba(79,142,247,0.2);border-radius:var(--r2);padding:14px 16px;font-size:13px;color:var(--text2);display:flex;gap:10px;align-items:flex-start;margin-bottom:16px}
+.info-box .info-icon{font-size:16px;flex-shrink:0;margin-top:1px}
+
+/* RESPONSIVE */
+@media(max-width:900px){
+  .dash-layout{grid-template-columns:1fr}
+  .sidebar{display:none}
+  .stats-row{grid-template-columns:repeat(2,1fr)}
+  .footer-inner{grid-template-columns:1fr 1fr}
+  .two-col,.three-col{grid-template-columns:1fr}
+}
+@media(max-width:600px){
+  .hero h1{font-size:36px;letter-spacing:-1px}
+  .hero-stats{gap:20px;flex-wrap:wrap}
+  .stats-row{grid-template-columns:repeat(2,1fr)}
+  .nav-links{display:none}
+}
+
+/* ACTIVE STATE HELPER */
+.active-sub{display:none}
+.active-sub.open{display:block}
+
+/* SHIMMER */
+.shimmer{background:linear-gradient(90deg,var(--surface) 25%,var(--surface2) 50%,var(--surface) 75%);background-size:200% 100%;animation:shimmer 1.5s infinite}
+@keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
+
+/* AVATAR */
+.user-avatar{width:40px;height:40px;border-radius:50%;background:var(--grad);display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:600;color:#fff;flex-shrink:0}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav id="main-nav">
+  <div class="nav-logo" onclick="showPage('landing')">
+    <div class="dot"></div>Card<span>Flip</span>
+  </div>
+  <div class="nav-links" id="landing-nav">
+    <button class="nav-link" onclick="scrollTo_(0,0)">Home</button>
+    <button class="nav-link" onclick="showPage('rates-public')">Rates</button>
+    <button class="nav-link" onclick="scrollToHowItWorks()">How It Works</button>
+    <button class="nav-link" onclick="scrollToPricing()">Pricing</button>
+  </div>
+  <div class="nav-links" id="app-nav" style="display:none">
+    <button class="nav-link" id="nav-dashboard" onclick="showDash('dash-home')">Dashboard</button>
+    <button class="nav-link" id="nav-sell" onclick="showDash('sell')">Sell Card</button>
+    <button class="nav-link" id="nav-rates" onclick="showDash('rates')">Live Rates</button>
+    <button class="nav-link" id="nav-wallet" onclick="showDash('wallet')">Wallet</button>
+    <button class="nav-link" id="nav-admin" onclick="showDash('admin')">Admin</button>
+  </div>
+  <div class="nav-right">
+    <button class="theme-toggle" onclick="toggleTheme()" title="Toggle theme">☀️</button>
+    <div class="notif-btn" onclick="showToast('You have 3 new notifications','info')">
+      🔔<div class="notif-dot"></div>
+    </div>
+    <div id="nav-auth-btns">
+      <button class="btn-nav" onclick="openModal('login')">Log In</button>
+      <button class="btn-nav primary" onclick="openModal('signup')">Get Started</button>
+    </div>
+    <div id="nav-user" style="display:none">
+      <div class="avatar-nav" onclick="showDash('profile')" title="Profile">JD</div>
+    </div>
+  </div>
+</nav>
+
+<!-- ==================== LANDING PAGE ==================== -->
+<div class="page active" id="page-landing">
+  <!-- HERO -->
+  <div class="hero">
+    <div class="hero-badge"><span class="pulse"></span> Live — Rates updating now</div>
+    <h1>Trade Gift Cards<br>at <span class="grad">Lightning Speed</span></h1>
+    <p class="hero-sub">Nigeria's fastest gift card trading platform. Sell your unused gift cards and get paid to your wallet in minutes.</p>
+    <div class="hero-actions">
+      <button class="btn-hero primary" onclick="openModal('signup')">Start Trading Free →</button>
+      <button class="btn-hero ghost" onclick="showPage('rates-public')">View Live Rates</button>
+    </div>
+    <div class="hero-stats">
+      <div class="hero-stat"><div class="hero-stat-val">₦2.8B+</div><div class="hero-stat-label">Traded Volume</div></div>
+      <div class="hero-stat"><div class="hero-stat-val">48,000+</div><div class="hero-stat-label">Active Traders</div></div>
+      <div class="hero-stat"><div class="hero-stat-val">99.2%</div><div class="hero-stat-label">Success Rate</div></div>
+      <div class="hero-stat"><div class="hero-stat-val">&lt;15min</div><div class="hero-stat-label">Avg. Payout Time</div></div>
+    </div>
+  </div>
+
+  <!-- TICKER -->
+  <div class="ticker-wrap">
+    <div class="ticker" id="ticker">
+      <div class="ticker-item"><span class="ticker-icon">🎵</span><span class="ticker-name">iTunes US</span><span class="ticker-rate">₦580/$</span></div>
+      <div class="ticker-item"><span class="ticker-icon">🎮</span><span class="ticker-name">Steam US</span><span class="ticker-rate">₦550/$</span></div>
+      <div class="ticker-item"><span class="ticker-icon">📦</span><span class="ticker-name">Amazon US</span><span class="ticker-rate">₦520/$</span></div>
+      <div class="ticker-item"><span class="ticker-icon">▶</span><span class="ticker-name">Google Play</span><span class="ticker-rate">₦490/$</span></div>
+      <div class="ticker-item"><span class="ticker-icon">💳</span><span class="ticker-name">Visa Gift</span><span class="ticker-rate">₦470/$</span></div>
+      <div class="ticker-item"><span class="ticker-icon">🔷</span><span class="ticker-name">Razer Gold</span><span class="ticker-rate">₦430/$</span></div>
+      <div class="ticker-item"><span class="ticker-icon">🛒</span><span class="ticker-name">eBay US</span><span class="ticker-rate">₦440/$</span></div>
+      <div class="ticker-item"><span class="ticker-icon">🎵</span><span class="ticker-name">iTunes UK</span><span class="ticker-rate">₦680/£</span></div>
+      <!-- duplicate for seamless loop -->
+      <div class="ticker-item"><span class="ticker-icon">🎵</span><span class="ticker-name">iTunes US</span><span class="ticker-rate">₦580/$</span></div>
+      <div class="ticker-item"><span class="ticker-icon">🎮</span><span class="ticker-name">Steam US</span><span class="ticker-rate">₦550/$</span></div>
+      <div class="ticker-item"><span class="ticker-icon">📦</span><span class="ticker-name">Amazon US</span><span class="ticker-rate">₦520/$</span></div>
+      <div class="ticker-item"><span class="ticker-icon">▶</span><span class="ticker-name">Google Play</span><span class="ticker-rate">₦490/$</span></div>
+      <div class="ticker-item"><span class="ticker-icon">💳</span><span class="ticker-name">Visa Gift</span><span class="ticker-rate">₦470/$</span></div>
+      <div class="ticker-item"><span class="ticker-icon">🔷</span><span class="ticker-name">Razer Gold</span><span class="ticker-rate">₦430/$</span></div>
+      <div class="ticker-item"><span class="ticker-icon">🛒</span><span class="ticker-name">eBay US</span><span class="ticker-rate">₦440/$</span></div>
+      <div class="ticker-item"><span class="ticker-icon">🎵</span><span class="ticker-name">iTunes UK</span><span class="ticker-rate">₦680/£</span></div>
+    </div>
+  </div>
+
+  <!-- FEATURES -->
+  <div class="section">
+    <div class="section-label">Why CardFlip</div>
+    <div class="section-title">Everything you need to<br>trade with confidence</div>
+    <div class="section-sub">Built for Nigeria's gift card traders — fast, secure, and transparent.</div>
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="feature-icon blue">⚡</div>
+        <div class="feature-title">Instant Payouts</div>
+        <div class="feature-desc">Get paid to your wallet in as little as 5 minutes after card verification. No delays, no excuses.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon green">📊</div>
+        <div class="feature-title">Best Rates Guaranteed</div>
+        <div class="feature-desc">We monitor the market 24/7 to always offer you the most competitive rates available.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon amber">🔒</div>
+        <div class="feature-title">Bank-Grade Security</div>
+        <div class="feature-desc">End-to-end encryption, AI fraud detection, and image verification keep every trade safe.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon red">🤝</div>
+        <div class="feature-title">24/7 Support</div>
+        <div class="feature-desc">Live chat support available around the clock. A human agent always ready to help you.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon blue">💸</div>
+        <div class="feature-title">Free Withdrawals</div>
+        <div class="feature-desc">Withdraw to any Nigerian bank account for free. No hidden charges or minimum amounts.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon green">🎁</div>
+        <div class="feature-title">Referral Rewards</div>
+        <div class="feature-desc">Earn ₦2,000 for every friend you refer who completes their first trade.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- HOW IT WORKS -->
+  <div id="how-it-works" style="background:var(--surface);border-top:1px solid var(--border);border-bottom:1px solid var(--border)">
+    <div class="section">
+      <div class="section-label">Process</div>
+      <div class="section-title">How it works</div>
+      <div class="section-sub">Sell your gift card in 4 simple steps</div>
+      <div class="steps">
+        <div class="step">
+          <div class="step-num">1</div>
+          <div class="step-title">Create Account</div>
+          <div class="step-desc">Sign up with email or phone and verify your identity with OTP in seconds.</div>
+        </div>
+        <div class="step">
+          <div class="step-num">2</div>
+          <div class="step-title">Select Card</div>
+          <div class="step-desc">Choose your gift card type, enter the amount, and upload a photo of the card.</div>
+        </div>
+        <div class="step">
+          <div class="step-num">3</div>
+          <div class="step-title">Get Verified</div>
+          <div class="step-desc">Our AI + human team verifies your card within 5–30 minutes.</div>
+        </div>
+        <div class="step">
+          <div class="step-num">4</div>
+          <div class="step-title">Get Paid</div>
+          <div class="step-desc">Naira credited to your wallet instantly. Withdraw to bank anytime.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- GIFT CARDS -->
+  <div class="section">
+    <div class="section-label">Supported Cards</div>
+    <div class="section-title">We buy all major gift cards</div>
+    <div class="cards-grid" id="landing-cards-grid"></div>
+  </div>
+
+  <!-- PRICING -->
+  <div id="pricing" style="background:var(--surface);border-top:1px solid var(--border);border-bottom:1px solid var(--border)">
+    <div class="section">
+      <div class="section-label">Pricing</div>
+      <div class="section-title">Simple, transparent fees</div>
+      <div class="section-sub">No hidden charges. You always know what you're getting.</div>
+      <div class="pricing-grid">
+        <div class="pricing-card">
+          <div class="pricing-tier">Starter</div>
+          <div class="pricing-price">Free</div>
+          <div class="pricing-sub">Perfect to get started</div>
+          <ul class="pricing-features">
+            <li>Up to ₦500K/month volume</li>
+            <li>1.5% platform fee</li>
+            <li>Free bank withdrawals</li>
+            <li>Basic support</li>
+            <li>All card types supported</li>
+          </ul>
+          <button class="btn primary" onclick="openModal('signup')" style="width:100%;justify-content:center">Get Started →</button>
+        </div>
+        <div class="pricing-card featured">
+          <div class="pricing-badge">Most Popular</div>
+          <div class="pricing-tier">Pro Trader</div>
+          <div class="pricing-price">1%</div>
+          <div class="pricing-sub">per transaction (min ₦50K/month)</div>
+          <ul class="pricing-features">
+            <li>Unlimited trading volume</li>
+            <li>1% platform fee (save 0.5%)</li>
+            <li>Priority card verification</li>
+            <li>Priority 24/7 live support</li>
+            <li>Advanced rate calculator</li>
+            <li>Referral dashboard</li>
+          </ul>
+          <button class="btn primary" onclick="openModal('signup')" style="width:100%;justify-content:center">Start Pro →</button>
+        </div>
+        <div class="pricing-card">
+          <div class="pricing-tier">Enterprise</div>
+          <div class="pricing-price">0.5%</div>
+          <div class="pricing-sub">Custom rates for high-volume traders</div>
+          <ul class="pricing-features">
+            <li>Negotiated volume rates</li>
+            <li>0.5% fee or lower</li>
+            <li>Dedicated account manager</li>
+            <li>API access</li>
+            <li>Custom settlement schedule</li>
+            <li>Bulk upload support</li>
+          </ul>
+          <button class="btn" onclick="showToast('Sales team will contact you','info')" style="width:100%;justify-content:center">Contact Sales</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CTA -->
+  <div class="section" style="text-align:center;padding:80px 24px">
+    <div class="section-title" style="max-width:500px;margin:0 auto 16px">Ready to turn gift cards into cash?</div>
+    <p style="color:var(--text2);font-size:15px;margin-bottom:32px">Join 48,000+ traders who trust CardFlip every day.</p>
+    <button class="btn-hero primary" onclick="openModal('signup')">Create Free Account →</button>
+  </div>
+
+  <footer>
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <div class="nav-logo" style="font-size:20px"><div class="dot"></div>Card<span>Flip</span></div>
+        <p>Nigeria's fastest and most trusted gift card trading platform. Trade with confidence.</p>
+      </div>
+      <div>
+        <div class="footer-col-title">Company</div>
+        <div class="footer-link">About Us</div>
+        <div class="footer-link">Blog</div>
+        <div class="footer-link">Careers</div>
+        <div class="footer-link">Press</div>
+      </div>
+      <div>
+        <div class="footer-col-title">Support</div>
+        <div class="footer-link">Help Center</div>
+        <div class="footer-link">Live Chat</div>
+        <div class="footer-link">Contact Us</div>
+        <div class="footer-link">Status</div>
+      </div>
+      <div>
+        <div class="footer-col-title">Legal</div>
+        <div class="footer-link">Privacy Policy</div>
+        <div class="footer-link">Terms of Service</div>
+        <div class="footer-link">AML Policy</div>
+        <div class="footer-link">Cookies</div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2025 CardFlip Technologies Ltd. All rights reserved.</span>
+      <span>Made with ♥ in Nigeria</span>
+    </div>
+  </footer>
+</div>
+
+<!-- ==================== PUBLIC RATES PAGE ==================== -->
+<div class="page" id="page-rates-public">
+  <div class="section" style="max-width:900px">
+    <div class="section-label">Live Rates</div>
+    <div class="section-title">Current Gift Card Rates</div>
+    <div class="section-sub">Rates are updated every 15 minutes. Click a card to calculate your payout.</div>
+
+    <div style="display:flex;gap:12px;margin-top:24px;flex-wrap:wrap">
+      <div class="search-box" style="flex:1;min-width:200px;margin-bottom:0">
+        <span class="search-icon">🔍</span>
+        <input class="search-input" placeholder="Search gift cards..." oninput="filterRates(this.value)">
+      </div>
+      <select class="form-select" style="width:160px" onchange="filterCategory(this.value)">
+        <option value="">All Countries</option>
+        <option value="US">United States</option>
+        <option value="UK">United Kingdom</option>
+        <option value="CA">Canada</option>
+        <option value="AU">Australia</option>
+      </select>
+    </div>
+
+    <table class="rates-table" style="margin-top:20px" id="public-rates-table">
+      <thead>
+        <tr>
+          <th>Gift Card</th>
+          <th>Country</th>
+          <th>Rate (per $1)</th>
+          <th>Change</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody id="public-rates-body"></tbody>
+    </table>
+
+    <div style="margin-top:40px;background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:24px">
+      <div class="card-title" style="margin-bottom:16px;font-size:16px">💰 Rate Calculator</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+        <div>
+          <div class="form-group">
+            <label class="form-label">Gift Card Type</label>
+            <select class="form-select" id="pub-calc-type" onchange="pubCalc()">
+              <option value="580">iTunes US — ₦580/$</option>
+              <option value="550">Steam US — ₦550/$</option>
+              <option value="520">Amazon US — ₦520/$</option>
+              <option value="490">Google Play — ₦490/$</option>
+              <option value="470">Visa Gift Card — ₦470/$</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Card Amount (USD)</label>
+            <input class="form-input" type="number" id="pub-calc-amt" value="100" oninput="pubCalc()">
+          </div>
+        </div>
+        <div style="display:flex;flex-direction:column;justify-content:center;align-items:center;background:var(--surface2);border-radius:var(--r2);padding:20px;text-align:center">
+          <div style="font-size:12px;color:var(--text3);margin-bottom:8px">You'll receive</div>
+          <div id="pub-calc-out" style="font-family:var(--mono);font-size:36px;font-weight:700;color:var(--green)">₦57,420</div>
+          <div style="font-size:11px;color:var(--text3);margin-top:6px">After 1% platform fee</div>
+          <button class="btn primary" style="margin-top:16px" onclick="openModal('signup')">Sell This Card →</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== DASHBOARD ==================== -->
+<div class="page" id="page-app">
+  <div class="dash-layout">
+    <!-- SIDEBAR -->
+    <div class="sidebar">
+      <div class="sidebar-section">
+        <div class="sidebar-label">Main</div>
+        <button class="sidebar-item active" id="sb-dash-home" onclick="showDash('dash-home')"><span class="icon">🏠</span> Dashboard</button>
+        <button class="sidebar-item" id="sb-sell" onclick="showDash('sell')"><span class="icon">💳</span> Sell Gift Card</button>
+        <button class="sidebar-item" id="sb-rates" onclick="showDash('rates')"><span class="icon">📊</span> Live Rates</button>
+        <button class="sidebar-item" id="sb-wallet" onclick="showDash('wallet')"><span class="icon">👛</span> Wallet <span class="badge-count">₦142K</span></button>
+        <button class="sidebar-item" id="sb-history" onclick="showDash('history')"><span class="icon">📋</span> Transaction History</button>
+        <button class="sidebar-item" id="sb-referral" onclick="showDash('referral')"><span class="icon">🎁</span> Referral Program</button>
+      </div>
+      <div class="sidebar-section">
+        <div class="sidebar-label">Admin</div>
+        <button class="sidebar-item" id="sb-admin" onclick="showDash('admin')"><span class="icon">⚙️</span> Admin Panel <span class="badge-count">3</span></button>
+      </div>
+      <div class="sidebar-section">
+        <div class="sidebar-label">Account</div>
+        <button class="sidebar-item" id="sb-profile" onclick="showDash('profile')"><span class="icon">👤</span> My Profile</button>
+        <button class="sidebar-item" onclick="logout()"><span class="icon">🚪</span> Logout</button>
+      </div>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div class="dash-content">
+
+      <!-- HOME -->
+      <div id="ds-dash-home" class="active-sub open">
+        <div class="dash-header">
+          <div>
+            <div class="dash-title">Good morning, John 👋</div>
+            <div class="dash-greeting">Here's what's happening with your account today</div>
+          </div>
+          <button class="btn primary" onclick="showDash('sell')">+ Sell Gift Card</button>
+        </div>
+
+        <div class="wallet-hero">
+          <div class="wh-label">Total Wallet Balance</div>
+          <div class="wh-amount"><span class="cur">₦</span> 142,500<span class="cur">.00</span></div>
+          <div class="wh-change">↑ +₦12,000 this week (+9.2%)</div>
+          <div class="wh-actions">
+            <button class="btn primary" onclick="openDepositModal()">+ Deposit</button>
+            <button class="btn" onclick="openWithdrawModal()">⬇ Withdraw</button>
+            <button class="btn green" onclick="showDash('sell')">💳 Sell Card</button>
+          </div>
+        </div>
+
+        <div class="stats-row">
+          <div class="stat-card">
+            <div class="stat-val green">₦89K</div>
+            <div class="stat-label">Total Earned</div>
+            <div class="stat-change up">↑ +₦23K this month</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-val amber">3</div>
+            <div class="stat-label">Pending Trades</div>
+            <div class="stat-change">Avg. 12 min review</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-val blue">18</div>
+            <div class="stat-label">Completed Trades</div>
+            <div class="stat-change up">↑ +4 this week</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-val">7</div>
+            <div class="stat-label">Referrals</div>
+            <div class="stat-change up">↑ +2 new</div>
+          </div>
+        </div>
+
+        <div class="two-col">
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">Weekly Earnings</div>
+              <div class="card-action">This week</div>
+            </div>
+            <div class="mini-chart" id="mini-chart"></div>
+            <div style="display:flex;justify-content:space-between;margin-top:6px;font-size:10px;color:var(--text3)">
+              <span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span><span>Sun</span>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">Top Rates Right Now</div>
+              <div class="card-action" onclick="showDash('rates')">View all →</div>
+            </div>
+            <div id="home-rates-list"></div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">Recent Transactions</div>
+            <div class="card-action" onclick="showDash('history')">View all →</div>
+          </div>
+          <div class="tx-list" id="home-tx-list"></div>
+        </div>
+      </div>
+
+      <!-- SELL -->
+      <div id="ds-sell" class="active-sub">
+        <div class="dash-header">
+          <div>
+            <div class="dash-title">Sell Gift Card</div>
+            <div class="dash-greeting">Submit your card for review and get paid in minutes</div>
+          </div>
+        </div>
+        <div class="two-col">
+          <div>
+            <div class="card" style="margin-bottom:16px">
+              <div class="card-title" style="margin-bottom:16px">Card Details</div>
+              <div class="form-group">
+                <label class="form-label">Gift Card Type *</label>
+                <select class="form-select" id="sell-type" onchange="updateSellCalc()">
+                  <option value="580">🎵 iTunes / Apple — US (₦580/$)</option>
+                  <option value="540">🎵 iTunes / Apple — UK (₦540/£)</option>
+                  <option value="550">🎮 Steam — US (₦550/$)</option>
+                  <option value="520">📦 Amazon — US (₦520/$)</option>
+                  <option value="490">▶ Google Play — US (₦490/$)</option>
+                  <option value="470">💳 Visa Gift Card (₦470/$)</option>
+                  <option value="430">🔷 Razer Gold (₦430/$)</option>
+                  <option value="440">🛒 eBay (₦440/$)</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Card Denomination (USD) *</label>
+                <input class="form-input" type="number" id="sell-amount" value="100" min="1" oninput="updateSellCalc()" placeholder="e.g. 100">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Card Code / PIN *</label>
+                <input class="form-input" type="text" id="sell-code" placeholder="Enter card code or e-code" autocomplete="off">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Additional Notes (optional)</label>
+                <textarea class="form-textarea" id="sell-notes" placeholder="Any extra info about the card..."></textarea>
+              </div>
+            </div>
+            <div class="card">
+              <div class="card-title" style="margin-bottom:16px">Upload Card Images *</div>
+              <div class="info-box">
+                <span class="info-icon">ℹ️</span>
+                <span>Upload clear photos of both the front and back of your card. E-codes: take a screenshot of the full email.</span>
+              </div>
+              <div class="upload-zone" onclick="fakeUpload('front')" id="upload-front">
+                <div class="upload-icon">📷</div>
+                <p>Front of card</p>
+                <small>Click or drag & drop · JPG, PNG · max 5MB</small>
+              </div>
+              <div class="upload-zone" style="margin-top:10px" onclick="fakeUpload('back')" id="upload-back">
+                <div class="upload-icon">📸</div>
+                <p>Back of card (or email screenshot)</p>
+                <small>Click or drag & drop · JPG, PNG · max 5MB</small>
+              </div>
+            </div>
+          </div>
+          <div>
+            <div class="card" style="margin-bottom:16px">
+              <div class="card-title" style="margin-bottom:16px">Payout Estimate</div>
+              <div class="payout-preview">
+                <div class="payout-label">You'll receive approximately</div>
+                <div class="payout-amount" id="sell-payout-out">₦57,420</div>
+                <div class="payout-note">After 1% platform fee • Credited on approval</div>
+              </div>
+              <div style="font-size:13px;color:var(--text2)">
+                <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border)">
+                  <span>Card value</span><span id="sell-raw-val" style="font-family:var(--mono)">$100 × ₦580 = ₦58,000</span>
+                </div>
+                <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border)">
+                  <span>Platform fee (1%)</span><span style="font-family:var(--mono);color:var(--red)">-₦580</span>
+                </div>
+                <div style="display:flex;justify-content:space-between;padding:8px 0;font-weight:600">
+                  <span>Net payout</span><span id="sell-net" style="font-family:var(--mono);color:var(--green)">₦57,420</span>
+                </div>
+              </div>
+            </div>
+            <div class="card" style="margin-bottom:16px">
+              <div class="card-title" style="margin-bottom:10px">How verification works</div>
+              <div style="font-size:13px;color:var(--text2);line-height:1.8">
+                <div>① Submit card details & images</div>
+                <div>② AI pre-screens for authenticity</div>
+                <div>③ Human agent reviews (~5–30 min)</div>
+                <div>④ Funds credited to your wallet</div>
+              </div>
+            </div>
+            <button class="btn primary" style="width:100%;justify-content:center;padding:14px;font-size:15px" onclick="submitCard()">
+              Submit for Review →
+            </button>
+            <div style="font-size:11px;color:var(--text3);text-align:center;margin-top:8px">Secure submission • End-to-end encrypted</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- RATES -->
+      <div id="ds-rates" class="active-sub">
+        <div class="dash-header">
+          <div>
+            <div class="dash-title">Live Rates</div>
+            <div class="dash-greeting">Updated every 15 minutes</div>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;font-size:12px;color:var(--green)">
+            <span class="pulse" style="width:7px;height:7px;background:var(--green);border-radius:50%;display:inline-block;animation:pulse 2s infinite"></span>
+            Live
+          </div>
+        </div>
+        <div class="card">
+          <div class="search-box">
+            <span class="search-icon">🔍</span>
+            <input class="search-input" placeholder="Search gift cards..." oninput="filterRates(this.value)">
+          </div>
+          <table class="rates-table" id="app-rates-table">
+            <thead>
+              <tr>
+                <th>Gift Card</th>
+                <th>Country</th>
+                <th>Type</th>
+                <th>Rate (per $1)</th>
+                <th>Change</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody id="app-rates-body"></tbody>
+          </table>
+        </div>
+        <div class="card" style="margin-top:16px">
+          <div class="card-title" style="margin-bottom:16px">Rate Calculator</div>
+          <div class="two-col" style="margin-bottom:0">
+            <div>
+              <div class="form-group">
+                <label class="form-label">Select Card</label>
+                <select class="form-select" id="app-calc-type" onchange="appCalc()">
+                  <option value="580">iTunes US — ₦580/$</option>
+                  <option value="550">Steam US — ₦550/$</option>
+                  <option value="520">Amazon US — ₦520/$</option>
+                  <option value="490">Google Play — ₦490/$</option>
+                  <option value="470">Visa Gift Card — ₦470/$</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Card Amount (USD)</label>
+                <input class="form-input" type="number" id="app-calc-amt" value="100" oninput="appCalc()">
+              </div>
+            </div>
+            <div style="background:var(--surface2);border-radius:var(--r2);padding:20px;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center">
+              <div style="font-size:12px;color:var(--text3);margin-bottom:8px">Net Payout</div>
+              <div id="app-calc-out" style="font-family:var(--mono);font-size:34px;font-weight:700;color:var(--green)">₦57,420</div>
+              <div style="font-size:11px;color:var(--text3);margin-top:6px">After 1% fee</div>
+              <button class="btn primary" style="margin-top:16px" onclick="showDash('sell')">Sell This Card →</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- WALLET -->
+      <div id="ds-wallet" class="active-sub">
+        <div class="dash-header">
+          <div>
+            <div class="dash-title">Wallet</div>
+            <div class="dash-greeting">Manage your balance and withdrawals</div>
+          </div>
+        </div>
+        <div class="wallet-hero">
+          <div class="wh-label">Available Balance</div>
+          <div class="wh-amount"><span class="cur">₦</span> 142,500</div>
+          <div class="wh-change">₦89,000 total earned • ₦50,000 withdrawn</div>
+          <div class="wh-actions">
+            <button class="btn primary" onclick="openDepositModal()">+ Add Money</button>
+            <button class="btn" onclick="openWithdrawModal()">⬇ Withdraw to Bank</button>
+          </div>
+        </div>
+        <div class="three-col">
+          <div class="stat-card">
+            <div class="stat-val green">₦89K</div>
+            <div class="stat-label">Total Credited</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-val red">₦50K</div>
+            <div class="stat-label">Total Withdrawn</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-val blue">18</div>
+            <div class="stat-label">Completed Trades</div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title" style="margin-bottom:4px">Recent Transactions</div>
+          <div class="card-action" style="margin-bottom:16px" onclick="showDash('history')">Full history →</div>
+          <div class="tx-list" id="wallet-tx-list"></div>
+        </div>
+      </div>
+
+      <!-- HISTORY -->
+      <div id="ds-history" class="active-sub">
+        <div class="dash-header">
+          <div>
+            <div class="dash-title">Transaction History</div>
+            <div class="dash-greeting">All your account activity</div>
+          </div>
+          <button class="btn" onclick="showToast('CSV exported!','success')">⬇ Export CSV</button>
+        </div>
+        <div class="card">
+          <div style="display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap">
+            <select class="form-select" style="width:140px">
+              <option>All Types</option>
+              <option>Credits</option>
+              <option>Debits</option>
+            </select>
+            <select class="form-select" style="width:140px">
+              <option>Last 30 Days</option>
+              <option>Last 7 Days</option>
+              <option>This Month</option>
+              <option>Last 3 Months</option>
+            </select>
+          </div>
+          <div class="tx-list" id="history-tx-list"></div>
+        </div>
+      </div>
+
+      <!-- REFERRAL -->
+      <div id="ds-referral" class="active-sub">
+        <div class="dash-header">
+          <div>
+            <div class="dash-title">Referral Program</div>
+            <div class="dash-greeting">Earn ₦2,000 for every friend who trades</div>
+          </div>
+        </div>
+        <div class="two-col">
+          <div>
+            <div class="card" style="margin-bottom:16px">
+              <div class="card-title" style="margin-bottom:10px">Your Referral Code</div>
+              <div class="ref-code-box">
+                <div class="ref-code">JDOE-X9K2</div>
+                <button class="btn-xs view" onclick="showToast('Copied to clipboard!','success')">Copy</button>
+              </div>
+              <div style="font-size:13px;color:var(--text2)">Share your link:</div>
+              <div style="background:var(--surface2);border-radius:var(--r3);padding:10px;font-size:12px;font-family:var(--mono);color:var(--accent);margin-top:8px;word-break:break-all">
+                https://cardflip.ng/ref/JDOE-X9K2
+              </div>
+              <div style="display:flex;gap:8px;margin-top:12px">
+                <button class="btn" onclick="showToast('Link copied!','success')" style="flex:1;justify-content:center">📋 Copy Link</button>
+                <button class="btn" onclick="showToast('Opened WhatsApp','info')" style="flex:1;justify-content:center">📱 Share</button>
+              </div>
+            </div>
+            <div class="card">
+              <div class="card-title" style="margin-bottom:16px">How It Works</div>
+              <div style="font-size:13px;color:var(--text2);line-height:2">
+                <div>① Share your referral code or link</div>
+                <div>② Friend signs up and completes their first trade</div>
+                <div>③ You both earn ₦2,000 bonus!</div>
+              </div>
+            </div>
+          </div>
+          <div>
+            <div class="stats-row" style="grid-template-columns:1fr 1fr;margin-bottom:16px">
+              <div class="stat-card"><div class="stat-val blue">7</div><div class="stat-label">Total Referrals</div></div>
+              <div class="stat-card"><div class="stat-val green">₦14K</div><div class="stat-label">Bonus Earned</div></div>
+            </div>
+            <div class="card">
+              <div class="card-title" style="margin-bottom:16px">Referral Progress</div>
+              <div style="font-size:13px;color:var(--text2);margin-bottom:8px">Reach 10 referrals for Elite status</div>
+              <div class="progress-bar"><div class="progress-fill" style="width:70%"></div></div>
+              <div style="font-size:11px;color:var(--text3);margin-top:6px">7/10 referrals</div>
+              <div class="divider"></div>
+              <div class="card-title" style="margin-bottom:12px">Your Referrals</div>
+              <div class="tx-item">
+                <div class="user-avatar" style="width:32px;height:32px;font-size:11px">AO</div>
+                <div class="tx-info"><div class="tx-name">Adaeze O.</div><div class="tx-meta">Joined Apr 2025</div></div>
+                <span class="badge approved">Paid ₦2K</span>
+              </div>
+              <div class="tx-item">
+                <div class="user-avatar" style="width:32px;height:32px;font-size:11px">EK</div>
+                <div class="tx-info"><div class="tx-name">Emeka K.</div><div class="tx-meta">Joined Mar 2025</div></div>
+                <span class="badge approved">Paid ₦2K</span>
+              </div>
+              <div class="tx-item">
+                <div class="user-avatar" style="width:32px;height:32px;font-size:11px">BU</div>
+                <div class="tx-info"><div class="tx-name">Blessing U.</div><div class="tx-meta">Joined May 2025</div></div>
+                <span class="badge pending">Pending</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ADMIN PANEL -->
+      <div id="ds-admin" class="active-sub">
+        <div class="dash-header">
+          <div>
+            <div class="dash-title">Admin Panel</div>
+            <div class="dash-greeting">Manage submissions, rates, and users</div>
+          </div>
+        </div>
+        <div style="display:flex;gap:4px;background:var(--surface);border:1px solid var(--border);border-radius:var(--r2);padding:4px;margin-bottom:20px;width:fit-content">
+          <button class="btn" style="background:var(--accent);border-color:var(--accent);color:#fff;padding:8px 18px" id="admin-tab-btn-subs" onclick="switchAdminTab('subs')">Submissions (3)</button>
+          <button class="btn" style="padding:8px 18px" id="admin-tab-btn-rates" onclick="switchAdminTab('admin-rates')">Rate Manager</button>
+          <button class="btn" style="padding:8px 18px" id="admin-tab-btn-users" onclick="switchAdminTab('admin-users')">Users</button>
+        </div>
+
+        <div id="admin-tab-subs">
+          <div class="card">
+            <div class="card-title" style="margin-bottom:16px">Pending Submissions</div>
+            <table class="admin-table" id="admin-subs-table">
+              <thead><tr><th>User</th><th>Card Type</th><th>Amount</th><th>Payout</th><th>Status</th><th>Actions</th></tr></thead>
+              <tbody id="admin-subs-body"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <div id="admin-tab-admin-rates" style="display:none">
+          <div class="card">
+            <div class="card-title" style="margin-bottom:16px">Manage Gift Card Rates</div>
+            <div class="info-box"><span class="info-icon">ℹ️</span> Changes take effect immediately after saving. Rates are in Naira per $1 USD.</div>
+            <table class="admin-table">
+              <thead><tr><th>Gift Card</th><th>Country</th><th>Current Rate (₦)</th><th>New Rate</th></tr></thead>
+              <tbody id="admin-rates-body"></tbody>
+            </table>
+            <button class="btn primary" style="margin-top:16px" onclick="saveRates()">Save All Rates →</button>
+          </div>
+        </div>
+
+        <div id="admin-tab-admin-users" style="display:none">
+          <div class="card">
+            <div class="card-title" style="margin-bottom:16px">User Management</div>
+            <div class="search-box">
+              <span class="search-icon">🔍</span>
+              <input class="search-input" placeholder="Search users by name or email...">
+            </div>
+            <table class="admin-table">
+              <thead><tr><th>User</th><th>Email</th><th>Joined</th><th>Volume</th><th>Status</th><th>Actions</th></tr></thead>
+              <tbody id="admin-users-body"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- PROFILE -->
+      <div id="ds-profile" class="active-sub">
+        <div class="dash-header">
+          <div>
+            <div class="dash-title">My Profile</div>
+            <div class="dash-greeting">Manage your account settings</div>
+          </div>
+        </div>
+        <div class="two-col">
+          <div>
+            <div class="card" style="margin-bottom:16px">
+              <div style="display:flex;align-items:center;gap:16px;margin-bottom:20px">
+                <div class="user-avatar" style="width:64px;height:64px;font-size:22px">JD</div>
+                <div>
+                  <div style="font-size:18px;font-weight:600">John Doe</div>
+                  <div style="font-size:13px;color:var(--text2)">john@example.com</div>
+                  <span class="badge info" style="margin-top:4px">Pro Trader</span>
+                </div>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Full Name</label>
+                <input class="form-input" value="John Doe">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Email Address</label>
+                <input class="form-input" value="john@example.com">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Phone Number</label>
+                <input class="form-input" value="+234 801 234 5678">
+              </div>
+              <button class="btn primary" onclick="showToast('Profile updated!','success')">Save Changes</button>
+            </div>
+            <div class="card">
+              <div class="card-title" style="margin-bottom:16px">Change Password</div>
+              <div class="form-group">
+                <label class="form-label">Current Password</label>
+                <input class="form-input" type="password" placeholder="••••••••">
+              </div>
+              <div class="form-group">
+                <label class="form-label">New Password</label>
+                <input class="form-input" type="password" placeholder="••••••••">
+              </div>
+              <button class="btn" onclick="showToast('Password changed!','success')">Update Password</button>
+            </div>
+          </div>
+          <div>
+            <div class="card" style="margin-bottom:16px">
+              <div class="card-title" style="margin-bottom:16px">Bank Account</div>
+              <div class="form-group">
+                <label class="form-label">Bank Name</label>
+                <select class="form-select">
+                  <option>GTBank</option><option>Access Bank</option><option>Zenith Bank</option><option>First Bank</option><option>UBA</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Account Number</label>
+                <input class="form-input" value="0123456789">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Account Name</label>
+                <input class="form-input" value="JOHN DOE" readonly style="opacity:0.7">
+              </div>
+              <button class="btn primary" onclick="showToast('Bank account saved!','success')">Save Bank Details</button>
+            </div>
+            <div class="card">
+              <div class="card-title" style="margin-bottom:12px">Account Stats</div>
+              <div class="tx-item"><div class="tx-info"><div class="tx-name">Member Since</div></div><span style="font-size:13px">January 2025</span></div>
+              <div class="tx-item"><div class="tx-info"><div class="tx-name">KYC Status</div></div><span class="badge approved">Verified</span></div>
+              <div class="tx-item"><div class="tx-info"><div class="tx-name">2FA Security</div></div><button class="btn-xs approve" onclick="showToast('2FA enabled!','success')">Enable</button></div>
+              <div class="tx-item"><div class="tx-info"><div class="tx-name">Account Tier</div></div><span class="badge info">Pro</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /dash-content -->
+  </div><!-- /dash-layout -->
+</div><!-- /page-app -->
+
+<!-- ==================== MODALS ==================== -->
+
+<!-- AUTH MODAL -->
+<div class="modal-overlay" id="modal-auth">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('auth')">✕</button>
+    <div id="auth-login-view">
+      <div class="modal-title">Welcome back</div>
+      <div class="modal-sub">Log into your CardFlip account</div>
+      <div class="modal-tabs">
+        <div class="modal-tab active" onclick="authTab('email',this)">Email</div>
+        <div class="modal-tab" onclick="authTab('phone',this)">Phone</div>
+      </div>
+      <div class="form-group">
+        <label class="form-label" id="auth-field-label">Email Address</label>
+        <input class="form-input" id="auth-field" type="email" placeholder="you@example.com">
+      </div>
+      <div class="form-group" id="auth-pass-group">
+        <label class="form-label">Password</label>
+        <input class="form-input" type="password" placeholder="••••••••">
+      </div>
+      <button class="btn primary" style="width:100%;justify-content:center;margin-bottom:12px" onclick="doLogin()">Log In →</button>
+      <div style="text-align:center;font-size:13px;color:var(--text2)">Don't have an account? <span style="color:var(--accent);cursor:pointer" onclick="openModal('signup')">Sign up</span></div>
+    </div>
+    <div id="auth-otp-view" style="display:none">
+      <div class="modal-title">Enter OTP</div>
+      <div class="modal-sub" id="otp-sub">We sent a 6-digit code to your phone</div>
+      <div class="otp-inputs">
+        <input class="otp-input" maxlength="1" oninput="otpNext(this,0)">
+        <input class="otp-input" maxlength="1" oninput="otpNext(this,1)">
+        <input class="otp-input" maxlength="1" oninput="otpNext(this,2)">
+        <input class="otp-input" maxlength="1" oninput="otpNext(this,3)">
+        <input class="otp-input" maxlength="1" oninput="otpNext(this,4)">
+        <input class="otp-input" maxlength="1" oninput="otpNext(this,5)">
+      </div>
+      <button class="btn primary" style="width:100%;justify-content:center" onclick="verifyOtp()">Verify & Continue →</button>
+      <div style="text-align:center;margin-top:12px;font-size:13px;color:var(--text2)">Didn't receive it? <span style="color:var(--accent);cursor:pointer">Resend</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- SIGNUP MODAL -->
+<div class="modal-overlay" id="modal-signup">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('signup')">✕</button>
+    <div class="modal-title">Create account</div>
+    <div class="modal-sub">Join thousands of traders on CardFlip</div>
+    <div class="form-group">
+      <label class="form-label">Full Name</label>
+      <input class="form-input" placeholder="John Doe">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Email Address</label>
+      <input class="form-input" type="email" placeholder="you@example.com">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Phone Number</label>
+      <input class="form-input" type="tel" placeholder="+234 801 234 5678">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Password</label>
+      <input class="form-input" type="password" placeholder="Min 8 characters">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Referral Code (optional)</label>
+      <input class="form-input" placeholder="e.g. JDOE-X9K2">
+    </div>
+    <button class="btn primary" style="width:100%;justify-content:center;margin-bottom:12px" onclick="doSignup()">Create Account →</button>
+    <div style="text-align:center;font-size:13px;color:var(--text2)">Already have an account? <span style="color:var(--accent);cursor:pointer" onclick="openModal('login')">Log in</span></div>
+  </div>
+</div>
+
+<!-- DEPOSIT MODAL -->
+<div class="modal-overlay" id="modal-deposit">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('deposit')">✕</button>
+    <div class="modal-title">Add Money</div>
+    <div class="modal-sub">Deposit funds to your CardFlip wallet</div>
+    <div class="info-box"><span class="info-icon">🏦</span>Transfer to the account below and your wallet will be credited automatically within 5 minutes.</div>
+    <div style="background:var(--surface2);border:1px solid var(--border);border-radius:var(--r2);padding:16px;margin-bottom:16px">
+      <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);font-size:13px">
+        <span style="color:var(--text2)">Bank</span><span style="font-weight:500">Providus Bank</span>
+      </div>
+      <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);font-size:13px">
+        <span style="color:var(--text2)">Account Number</span>
+        <span style="font-family:var(--mono);font-size:16px;color:var(--accent);font-weight:600;cursor:pointer" onclick="showToast('Account number copied!','success')">5901234567</span>
+      </div>
+      <div style="display:flex;justify-content:space-between;padding:8px 0;font-size:13px">
+        <span style="color:var(--text2)">Account Name</span><span style="font-weight:500">CardFlip/John Doe</span>
+      </div>
+    </div>
+    <button class="btn primary" style="width:100%;justify-content:center" onclick="showToast('Transfer details copied!','success');closeModal('deposit')">Copy Account Details</button>
+  </div>
+</div>
+
+<!-- WITHDRAW MODAL -->
+<div class="modal-overlay" id="modal-withdraw">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('withdraw')">✕</button>
+    <div class="modal-title">Withdraw Funds</div>
+    <div class="modal-sub">Transfer to your linked bank account</div>
+    <div style="background:var(--surface2);border:1px solid var(--border);border-radius:var(--r2);padding:12px;margin-bottom:16px;display:flex;justify-content:space-between;align-items:center">
+      <div><div style="font-size:11px;color:var(--text3)">Available Balance</div><div style="font-family:var(--mono);font-size:20px;font-weight:600;color:var(--green)">₦142,500</div></div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Withdraw to</label>
+      <select class="form-select">
+        <option>GTBank — 0123456789 (John Doe)</option>
+        <option>+ Add new bank account</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Amount (₦)</label>
+      <input class="form-input" type="number" placeholder="e.g. 50000" id="withdraw-amt">
+    </div>
+    <button class="btn primary" style="width:100%;justify-content:center" onclick="doWithdraw()">Request Withdrawal →</button>
+  </div>
+</div>
+
+<!-- TOAST CONTAINER -->
+<div class="toast-container" id="toast-container"></div>
+
+<script>
+// ============ DATA ============
+const giftCards = [
+  {icon:'🎵',name:'iTunes / Apple',country:'US',type:'Physical',rate:580,change:'+10',trend:'up'},
+  {icon:'🎵',name:'iTunes / Apple',country:'UK',type:'E-code',rate:680,change:'+5',trend:'up'},
+  {icon:'🎵',name:'iTunes / Apple',country:'CA',type:'Any',rate:620,change:'-2',trend:'down'},
+  {icon:'🎮',name:'Steam',country:'US',type:'Any',rate:550,change:'+8',trend:'up'},
+  {icon:'🎮',name:'Steam',country:'UK',type:'Any',rate:590,change:'+3',trend:'up'},
+  {icon:'📦',name:'Amazon',country:'US',type:'E-code',rate:520,change:'-5',trend:'down'},
+  {icon:'📦',name:'Amazon',country:'UK',type:'E-code',rate:560,change:'0',trend:'flat'},
+  {icon:'▶',name:'Google Play',country:'US',type:'E-code',rate:490,change:'+2',trend:'up'},
+  {icon:'💳',name:'Visa Gift Card',country:'US',type:'Physical',rate:470,change:'-8',trend:'down'},
+  {icon:'🔷',name:'Razer Gold',country:'US',type:'E-code',rate:430,change:'+1',trend:'up'},
+  {icon:'🛒',name:'eBay',country:'US',type:'E-code',rate:440,change:'+4',trend:'up'},
+  {icon:'🎯',name:'Target',country:'US',type:'Physical',rate:460,change:'-3',trend:'down'},
+  {icon:'🛍',name:'Walmart',country:'US',type:'Physical',rate:450,change:'+6',trend:'up'},
+  {icon:'🎬',name:'Netflix Gift',country:'US',type:'E-code',rate:480,change:'+2',trend:'up'},
+  {icon:'🎵',name:'Spotify Gift',country:'US',type:'E-code',rate:410,change:'-1',trend:'down'},
+  {icon:'🍎',name:'App Store',country:'AU',type:'E-code',rate:380,change:'+9',trend:'up'},
+];
+
+const transactions = [
+  {icon:'💳',name:'iTunes $200 sold',meta:'Approved • May 5, 2:14 PM',amount:'+₦116,000',type:'credit',status:'Approved'},
+  {icon:'⬇',name:'Withdrawal to GTBank',meta:'Completed • May 4, 9:00 AM',amount:'-₦50,000',type:'debit',status:'Completed'},
+  {icon:'💳',name:'Steam $100 sold',meta:'Approved • May 3, 6:20 PM',amount:'+₦54,450',type:'credit',status:'Approved'},
+  {icon:'💳',name:'Google Play $50 sold',meta:'Approved • May 3, 4:55 PM',amount:'+₦24,255',type:'credit',status:'Approved'},
+  {icon:'🎁',name:'Referral Bonus — Adaeze',meta:'Credited • May 2',amount:'+₦2,000',type:'credit',status:'Credited'},
+  {icon:'💳',name:'Amazon $75 sold',meta:'Approved • Apr 30, 11:10 AM',amount:'+₦38,745',type:'credit',status:'Approved'},
+  {icon:'⬇',name:'Withdrawal to GTBank',meta:'Completed • Apr 28',amount:'-₦80,000',type:'debit',status:'Completed'},
+  {icon:'⏳',name:'iTunes $100 — Under review',meta:'Pending • May 5, 10:30 AM',amount:'₦57,420',type:'pending',status:'Pending'},
+];
+
+const adminSubs = [
+  {id:'s1',user:'john@gmail.com',card:'iTunes US $200',amount:'$200',payout:'₦116,000',status:'pending'},
+  {id:'s2',user:'emeka@yahoo.com',card:'Steam US $100',amount:'$100',payout:'₦54,450',status:'pending'},
+  {id:'s3',user:'amira@hotmail.com',card:'Amazon US $50',amount:'$50',payout:'₦25,740',status:'pending'},
+  {id:'s4',user:'temi@gmail.com',card:'Google Play $25',amount:'$25',payout:'₦12,128',status:'approved'},
+];
+
+const users = [
+  {name:'John Doe',email:'john@gmail.com',joined:'Jan 2025',volume:'₦342K',status:'active'},
+  {name:'Emeka Okafor',email:'emeka@yahoo.com',joined:'Mar 2025',volume:'₦187K',status:'active'},
+  {name:'Amira Hassan',email:'amira@hotmail.com',joined:'May 2025',volume:'₦23K',status:'flagged'},
+  {name:'Temi Williams',email:'temi@gmail.com',joined:'Feb 2025',volume:'₦98K',status:'active'},
+  {name:'Chidi Nweke',email:'chidi@gmail.com',joined:'Apr 2025',volume:'₦56K',status:'active'},
+];
+
+// ============ PAGE ROUTING ============
+let loggedIn = false;
+
+function showPage(id) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  const el = document.getElementById('page-' + id);
+  if(el) el.classList.add('active');
+  document.getElementById('landing-nav').style.display = (id==='landing'||id==='rates-public') ? 'flex' : 'none';
+  document.getElementById('app-nav').style.display = (id==='app') ? 'flex' : 'none';
+  if(id==='rates-public') renderPublicRates();
+  window.scrollTo(0,0);
+}
+
+// ============ DASHBOARD ============
+function showDash(section) {
+  if(!loggedIn) { openModal('login'); return; }
+  showPage('app');
+  document.querySelectorAll('.active-sub').forEach(s => s.classList.remove('open'));
+  const el = document.getElementById('ds-'+section);
+  if(el) el.classList.add('open');
+  document.querySelectorAll('.sidebar-item').forEach(s => s.classList.remove('active'));
+  const sb = document.getElementById('sb-'+section);
+  if(sb) sb.classList.add('active');
+  document.querySelectorAll('#app-nav .nav-link').forEach(l => l.classList.remove('active'));
+  const navMap = {'dash-home':'nav-dashboard','sell':'nav-sell','rates':'nav-rates','wallet':'nav-wallet','admin':'nav-admin'};
+  const navEl = document.getElementById(navMap[section]);
+  if(navEl) navEl.classList.add('active');
+  if(section==='dash-home') renderHomeRates(),renderHomeTxList(),renderMiniChart();
+  if(section==='rates') renderAppRates();
+  if(section==='wallet'||section==='history') renderTxLists();
+  if(section==='admin') renderAdmin();
+}
+
+// ============ RENDER FUNCTIONS ============
+function renderPublicRates() {
+  const tbody = document.getElementById('public-rates-body');
+  if(!tbody) return;
+  tbody.innerHTML = giftCards.map(c => `
+    <tr>
+      <td><span style="margin-right:8px">${c.icon}</span>${c.name}</td>
+      <td>${c.country}</td>
+      <td style="font-family:var(--mono);font-weight:600;color:var(--green)">₦${c.rate}</td>
+      <td class="rate-change ${c.trend==='up'?'up':'down'}">${c.trend==='up'?'▲':'▼'} ${c.change}</td>
+      <td><button class="btn-xs view" onclick="openModal('signup')">Sell Now</button></td>
+    </tr>`).join('');
+}
+
+function renderAppRates() {
+  const tbody = document.getElementById('app-rates-body');
+  if(!tbody) return;
+  tbody.innerHTML = giftCards.map(c => `
+    <tr>
+      <td><span style="margin-right:8px">${c.icon}</span>${c.name}</td>
+      <td>${c.country}</td>
+      <td>${c.type}</td>
+      <td style="font-family:var(--mono);font-weight:600;color:var(--green)">₦${c.rate}</td>
+      <td class="rate-change ${c.trend==='up'?'up':'down'}">${c.trend==='up'?'▲':'▼'} ${c.change}</td>
+      <td><button class="btn-xs approve" onclick="showDash('sell')">Sell</button></td>
+    </tr>`).join('');
+}
+
+function renderHomeRates() {
+  const el = document.getElementById('home-rates-list');
+  if(!el) return;
+  el.innerHTML = giftCards.slice(0,5).map(c => `
+    <div class="tx-item">
+      <span style="font-size:18px">${c.icon}</span>
+      <div class="tx-info"><div class="tx-name">${c.name} (${c.country})</div><div class="tx-meta">${c.type}</div></div>
+      <div style="text-align:right"><div style="font-family:var(--mono);color:var(--green);font-weight:600">₦${c.rate}</div><div style="font-size:10px;color:var(--text3)">per $1</div></div>
+    </div>`).join('');
+}
+
+function renderTxLists() {
+  ['home-tx-list','wallet-tx-list','history-tx-list'].forEach(id => {
+    const el = document.getElementById(id);
+    if(!el) return;
+    const data = id==='home-tx-list' ? transactions.slice(0,5) : transactions;
+    el.innerHTML = data.map(t => `
+      <div class="tx-item">
+        <div class="tx-icon ${t.type}">${t.icon}</div>
+        <div class="tx-info"><div class="tx-name">${t.name}</div><div class="tx-meta">${t.meta}</div></div>
+        <div><div class="tx-amount ${t.type}">${t.amount}</div><div class="tx-status"><span class="badge ${t.status==='Approved'||t.status==='Completed'||t.status==='Credited'?'approved':t.status==='Pending'?'pending':''}" style="font-size:10px">${t.status}</span></div></div>
+      </div>`).join('');
+  });
+}
+
+function renderHomeTxList() { renderTxLists(); }
+
+function renderMiniChart() {
+  const el = document.getElementById('mini-chart');
+  if(!el) return;
+  const vals = [45,72,30,88,56,94,67];
+  const max = Math.max(...vals);
+  el.innerHTML = vals.map((v,i) => `<div class="bar${i===6?' today':''}" style="height:${(v/max)*100}%"></div>`).join('');
+}
+
+function renderAdmin() {
+  const tbody = document.getElementById('admin-subs-body');
+  if(tbody) {
+    tbody.innerHTML = adminSubs.map(s => `
+      <tr id="row-${s.id}">
+        <td>${s.user}</td>
+        <td>${s.card}</td>
+        <td style="font-family:var(--mono)">${s.amount}</td>
+        <td style="font-family:var(--mono);color:var(--green)">${s.payout}</td>
+        <td><span class="badge ${s.status}" id="badge-${s.id}">${s.status}</span></td>
+        <td><div class="action-btns">
+          ${s.status==='pending'?`
+          <button class="btn-xs approve" onclick="adminAction('${s.id}','approved')">✓ Approve</button>
+          <button class="btn-xs reject" onclick="adminAction('${s.id}','rejected')">✗ Reject</button>`:
+          '<span style="font-size:11px;color:var(--text3)">Processed</span>'}
+          <button class="btn-xs view" onclick="showToast('Card image viewer opened','info')">View</button>
+        </div></td>
+      </tr>`).join('');
+  }
+  const arBody = document.getElementById('admin-rates-body');
+  if(arBody) {
+    arBody.innerHTML = giftCards.map((c,i) => `
+      <tr>
+        <td><span style="margin-right:8px">${c.icon}</span>${c.name}</td>
+        <td>${c.country}</td>
+        <td style="font-family:var(--mono)">${c.rate}</td>
+        <td><input class="rate-edit-input" type="number" value="${c.rate}" onchange="giftCards[${i}].rate=+this.value"></td>
+      </tr>`).join('');
+  }
+  const uBody = document.getElementById('admin-users-body');
+  if(uBody) {
+    uBody.innerHTML = users.map(u => `
+      <tr>
+        <td>${u.name}</td>
+        <td>${u.email}</td>
+        <td>${u.joined}</td>
+        <td style="font-family:var(--mono)">${u.volume}</td>
+        <td><span class="badge ${u.status==='flagged'?'flagged':'approved'}">${u.status}</span></td>
+        <td><div class="action-btns">
+          <button class="btn-xs view" onclick="showToast('Opening user profile','info')">View</button>
+          ${u.status==='flagged'?`<button class="btn-xs reject" onclick="showToast('User suspended','warning')">Suspend</button>`:`<button class="btn-xs reject" onclick="showToast('User flagged','warning')">Flag</button>`}
+        </div></td>
+      </tr>`).join('');
+  }
+}
+
+function renderLandingCards() {
+  const el = document.getElementById('landing-cards-grid');
+  if(!el) return;
+  el.innerHTML = giftCards.map(c => `
+    <div class="gc-card" onclick="openModal('signup')">
+      <div class="gc-icon" style="background:var(--surface2)">${c.icon}</div>
+      <div><div class="gc-name">${c.name}</div><div class="gc-rate">₦${c.rate}/$</div></div>
+    </div>`).join('');
+}
+
+// ============ CALCULATORS ============
+function pubCalc() {
+  const rate = +document.getElementById('pub-calc-type').value;
+  const amt = +document.getElementById('pub-calc-amt').value||0;
+  document.getElementById('pub-calc-out').textContent = '₦'+Math.round(amt*rate*0.99).toLocaleString();
+}
+function appCalc() {
+  const rate = +document.getElementById('app-calc-type').value;
+  const amt = +document.getElementById('app-calc-amt').value||0;
+  document.getElementById('app-calc-out').textContent = '₦'+Math.round(amt*rate*0.99).toLocaleString();
+}
+function updateSellCalc() {
+  const rate = +document.getElementById('sell-type').value;
+  const amt = +document.getElementById('sell-amount').value||0;
+  const gross = amt*rate;
+  const fee = Math.round(gross*0.01);
+  const net = Math.round(gross*0.99);
+  const out = document.getElementById('sell-payout-out');
+  const rawVal = document.getElementById('sell-raw-val');
+  const netEl = document.getElementById('sell-net');
+  if(out) out.textContent = '₦'+net.toLocaleString();
+  if(rawVal) rawVal.textContent = `$${amt} × ₦${rate} = ₦${Math.round(gross).toLocaleString()}`;
+  if(netEl) netEl.textContent = '₦'+net.toLocaleString();
+}
+
+// ============ FILTER ============
+function filterRates(q) {
+  const rows = document.querySelectorAll('#public-rates-body tr, #app-rates-body tr');
+  rows.forEach(r => {
+    r.style.display = r.textContent.toLowerCase().includes(q.toLowerCase()) ? '' : 'none';
+  });
+}
+function filterCategory(v) {
+  const rows = document.querySelectorAll('#public-rates-body tr');
+  rows.forEach(r => {
+    r.style.display = (!v || r.cells[1]?.textContent===v) ? '' : 'none';
+  });
+}
+
+// ============ ADMIN ============
+function adminAction(id, action) {
+  const badge = document.getElementById('badge-'+id);
+  const row = document.getElementById('row-'+id);
+  if(badge) { badge.className='badge '+(action==='approved'?'approved':'rejected'); badge.textContent=action; }
+  const btns = row?.querySelectorAll('.btn-xs.approve, .btn-xs.reject');
+  btns?.forEach(b => b.remove());
+  const sub = adminSubs.find(s=>s.id===id);
+  if(sub) sub.status=action;
+  showToast(`Card ${action}! User notified.`, action==='approved'?'success':'warning');
+}
+function switchAdminTab(tab) {
+  ['subs','admin-rates','admin-users'].forEach(t => {
+    const el = document.getElementById('admin-tab-'+t);
+    const btn = document.getElementById('admin-tab-btn-'+t);
+    if(el) el.style.display = t===tab ? 'block' : 'none';
+    if(btn) {
+      btn.style.background = t===tab ? 'var(--accent)' : '';
+      btn.style.borderColor = t===tab ? 'var(--accent)' : '';
+      btn.style.color = t===tab ? '#fff' : '';
+    }
+  });
+}
+function saveRates() { showToast('All rates saved and pushed live!','success'); }
+
+// ============ SELL ============
+function submitCard() {
+  const code = document.getElementById('sell-code').value.trim();
+  if(!code) { showToast('Please enter a card code or PIN','error'); return; }
+  showToast('Submitted for review! Payout in ~5–30 min','success');
+  document.getElementById('sell-code').value = '';
+  setTimeout(() => showToast('Card verification in progress...','info'), 2000);
+}
+function fakeUpload(side) {
+  const el = document.getElementById('upload-'+side);
+  el.innerHTML = `<div class="upload-icon">✅</div><p>${side==='front'?'Front':'Back'} uploaded successfully</p><small>image_${side}.jpg</small>`;
+  el.style.borderColor = 'var(--green)';
+  el.style.color = 'var(--green)';
+  showToast(`${side==='front'?'Front':'Back'} image uploaded`,'success');
+}
+
+// ============ AUTH ============
+let authMethod = 'email';
+function authTab(method, el) {
+  authMethod = method;
+  document.querySelectorAll('.modal-tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  const label = document.getElementById('auth-field-label');
+  const field = document.getElementById('auth-field');
+  const passGroup = document.getElementById('auth-pass-group');
+  if(method==='phone') {
+    label.textContent='Phone Number'; field.type='tel'; field.placeholder='+234 801 234 5678';
+    passGroup.style.display='none';
+  } else {
+    label.textContent='Email Address'; field.type='email'; field.placeholder='you@example.com';
+    passGroup.style.display='block';
+  }
+}
+function doLogin() {
+  if(authMethod==='phone') {
+    document.getElementById('auth-login-view').style.display='none';
+    document.getElementById('auth-otp-view').style.display='block';
+    document.getElementById('otp-sub').textContent='We sent a 6-digit code to your phone number';
+    document.querySelector('.otp-input').focus();
+    return;
+  }
+  completeLogin();
+}
+function otpNext(el, idx) {
+  if(el.value.length===1) {
+    const inputs = document.querySelectorAll('.otp-input');
+    if(idx < inputs.length-1) inputs[idx+1].focus();
+  }
+}
+function verifyOtp() { completeLogin(); }
+function doSignup() {
+  document.getElementById('auth-login-view').style.display='flex';
+  document.getElementById('auth-login-view').style.flexDirection='column';
+  closeModal('signup');
+  openModal('login');
+  showToast('Account created! Please verify your phone','success');
+}
+function completeLogin() {
+  loggedIn = true;
+  closeAllModals();
+  document.getElementById('nav-auth-btns').style.display='none';
+  document.getElementById('nav-user').style.display='flex';
+  document.getElementById('app-nav').style.display='flex';
+  showToast('Welcome back, John! 👋','success');
+  showDash('dash-home');
+}
+function logout() {
+  loggedIn=false;
+  document.getElementById('nav-auth-btns').style.display='flex';
+  document.getElementById('nav-user').style.display='none';
+  showPage('landing');
+  showToast('Logged out successfully','info');
+}
+
+// ============ MODALS ============
+function openModal(type) {
+  if(type==='login') { document.getElementById('modal-auth').classList.add('open'); document.getElementById('auth-login-view').style.display='block'; document.getElementById('auth-otp-view').style.display='none'; }
+  else if(type==='signup') document.getElementById('modal-signup').classList.add('open');
+  else if(type==='deposit') document.getElementById('modal-deposit').classList.add('open');
+  else if(type==='withdraw') document.getElementById('modal-withdraw').classList.add('open');
+}
+function openDepositModal() { openModal('deposit'); }
+function openWithdrawModal() { openModal('withdraw'); }
+function closeModal(type) {
+  if(type==='auth'||type==='login') document.getElementById('modal-auth').classList.remove('open');
+  else if(type==='signup') document.getElementById('modal-signup').classList.remove('open');
+  else if(type==='deposit') document.getElementById('modal-deposit').classList.remove('open');
+  else if(type==='withdraw') document.getElementById('modal-withdraw').classList.remove('open');
+}
+function closeAllModals() {
+  document.querySelectorAll('.modal-overlay').forEach(m => m.classList.remove('open'));
+}
+document.querySelectorAll('.modal-overlay').forEach(m => {
+  m.addEventListener('click', e => { if(e.target===m) m.classList.remove('open'); });
+});
+function doWithdraw() {
+  const amt = document.getElementById('withdraw-amt').value;
+  if(!amt||+amt<1000) { showToast('Minimum withdrawal is ₦1,000','error'); return; }
+  showToast(`Withdrawal of ₦${(+amt).toLocaleString()} requested!`,'success');
+  closeModal('withdraw');
+}
+
+// ============ TOAST ============
+function showToast(msg, type='info') {
+  const icons = {success:'✅',error:'❌',info:'ℹ️',warning:'⚠️'};
+  const container = document.getElementById('toast-container');
+  const toast = document.createElement('div');
+  toast.className = `toast ${type}`;
+  toast.innerHTML = `<span class="toast-icon">${icons[type]||'ℹ️'}</span><span class="toast-msg">${msg}</span>`;
+  container.appendChild(toast);
+  setTimeout(() => { toast.classList.add('removing'); setTimeout(() => toast.remove(), 200); }, 3000);
+}
+
+// ============ THEME ============
+function toggleTheme() {
+  const html = document.documentElement;
+  const isDark = html.getAttribute('data-theme')==='dark';
+  html.setAttribute('data-theme', isDark?'light':'dark');
+  document.querySelector('.theme-toggle').textContent = isDark ? '🌙' : '☀️';
+}
+
+// ============ SCROLL HELPERS ============
+function scrollToHowItWorks() {
+  showPage('landing');
+  setTimeout(() => document.getElementById('how-it-works')?.scrollIntoView({behavior:'smooth'}), 100);
+}
+function scrollToPricing() {
+  showPage('landing');
+  setTimeout(() => document.getElementById('pricing')?.scrollIntoView({behavior:'smooth'}), 100);
+}
+
+// ============ INIT ============
+renderLandingCards();
+</script>
+</body>
+</html>
